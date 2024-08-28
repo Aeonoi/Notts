@@ -1,26 +1,28 @@
-import React, { useState, useCallback } from 'react'
-import CodeMirror from '@uiw/react-codemirror'
-import { markdown, markdownLanguage } from '@codemirror/lang-markdown'
-import { languages } from '@codemirror/language-data'
-
-import Markdown from 'react-markdown'
+import React, { useState } from 'react'
+import MDEditor from '@uiw/react-md-editor';
 import './styles/Editor.css'
-
 
 function Editor() {
   const [value, setValue] = useState("")
 
-  const onChange = useCallback((val, viewUpdate) => {
-    setValue(val);
-    // TODO: Save val in a database 
-  }, []);
+  const writeNote = (noteVal) => {
+    setValue(noteVal)
+    console.log(noteVal)
+  }
+
+
+
   return (
-    <div>
-      <CodeMirror value={value} onChange={onChange} extensions={[markdown({ base: markdownLanguage, codeLanguages: languages })]} />
+    <div className='w-screen h-screen'>
+      <MDEditor
+        value={value}
+        onChange={(e) => writeNote(e)}
+        preview="edit"
+        height="100%"
+        visibleDragbar={false}
+      />
     </div>
   )
 }
-
-
 
 export default Editor 
