@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   Typography,
@@ -10,7 +10,6 @@ import {
   Accordion,
   AccordionHeader,
   AccordionBody,
-  Alert,
 } from "@material-tailwind/react";
 import {
   PresentationChartBarIcon,
@@ -23,25 +22,32 @@ import {
 import {
   ChevronRightIcon,
   ChevronDownIcon,
-  CubeTransparentIcon,
 } from "@heroicons/react/24/outline";
 
 import '../../input.css'
 
 function Sidebar() {
-  const [open, setOpen] = React.useState(0);
-  const [openAlert, setOpenAlert] = React.useState(true);
+  const [open, setOpen] = useState(0);
   const user = "User"
 
   const handleOpen = (value) => {
-    setOpen(open === value ? 0 : value);
-  };
+    setOpen(open === value ? 0 : value)
+  }
+
+  // const hours = new Date().getHours()
+  // const [greeting, setGreeting] = useState("Good Evening " + user)
+  // if (6 <= hours && hours < 11) {
+  //   setGreeting("Good Morning " + user)
+  // }
+  // else if (11 < hours && hours <= 17) {
+  //   setGreeting("Good Afternoon " + user)
+  // }
 
   return (
     <Card className="h-[calc(100vh-2rem)] max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
       <div className="mb-2 flex items-center gap-4 p-4">
         <Typography variant="h5" color="blue-gray">
-          Hi {user}
+          Hello {user}
         </Typography>
       </div>
 
@@ -163,7 +169,7 @@ function Sidebar() {
         </ListItem>
       </List>
     </Card>
-  );
+  )
 }
 
 export default Sidebar
