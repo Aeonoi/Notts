@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import MDEditor from '@uiw/react-md-editor';
+import { saveMarkdownFile, getMarkdownFile, deleteMarkdownFile } from './app.js'
 import './styles/Editor.css'
 
 function Editor() {
@@ -8,9 +9,10 @@ function Editor() {
   const writeNote = (noteVal) => {
     setValue(noteVal)
     console.log(noteVal)
+
+    // save markdown file 
+    saveMarkdownFile("test", value)
   }
-
-
 
   return (
     <div className='w-screen h-screen'>
