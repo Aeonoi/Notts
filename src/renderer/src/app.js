@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:5000/";
+const API_BASE_URL = "http://localhost:5000";
 
 export const saveMarkdownFile = async (filename, content) => {
   const response = await fetch(`${API_BASE_URL}/markdown`, {
@@ -8,17 +8,27 @@ export const saveMarkdownFile = async (filename, content) => {
     },
     body: JSON.stringify({ filename, content }),
   });
-  return response.json();
 };
 
 export const getMarkdownFile = async (filename) => {
-  const response = await fetch(`${API_BASE_URL}/markdown/${filename}`);
-  return response.json();
+  // TODO: Something wrong here
+  const reponse = await fetch(`${API_BASE_URL}/markdown/${filename}`)
+    .then((response) => {
+      // 200 is Okay
+      if (response.status != 200) {
+        throw new Error("Error finding file");
+      }
+    })
+    .then((content) => {
+      console.log("CONTENT: " + content);
+      return content;
+    })
+    .catch((error) => console.error(error));
+  return reponse;
 };
 
 export const deleteMarkdownFile = async (filename) => {
   const response = await fetch(`${API_BASE_URL}/markdown/${filename}`, {
     method: "DELETE",
   });
-  return response.json();
 };

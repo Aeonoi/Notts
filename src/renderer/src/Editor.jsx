@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import MDEditor from '@uiw/react-md-editor';
 import { saveMarkdownFile, getMarkdownFile, deleteMarkdownFile } from './app.js'
 import './styles/Editor.css'
@@ -6,12 +6,24 @@ import './styles/Editor.css'
 function Editor() {
   const [value, setValue] = useState("")
 
+  useEffect(() => {
+    const fetchFile = async () => {
+      const result = await getMarkdownFile("temp.md");
+      console.log("RESULT: " + result)
+      if (result.content) {
+        setContent(result.content);
+      }
+    };
+    fetchFile();
+  }, []);
+
+
   const writeNote = (noteVal) => {
     setValue(noteVal)
-    console.log(noteVal)
 
-    // save markdown file 
-    saveMarkdownFile("test", value)
+    // save markdown file, creates POST request
+    // delayed by one character (not including copies)
+    saveMarkdownFile("temp1.md", value)
   }
 
   return (
