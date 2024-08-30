@@ -10,21 +10,18 @@ export const saveMarkdownFile = async (filename, content) => {
   });
 };
 
-export const getMarkdownFile = async (filename) => {
-  // TODO: Something wrong here
-  const reponse = await fetch(`${API_BASE_URL}/markdown/${filename}`)
+export const getMarkdownFile = (filename) => {
+  fetch(`${API_BASE_URL}/markdown/${filename}`)
     .then((response) => {
-      // 200 is Okay
-      if (response.status != 200) {
-        throw new Error("Error finding file");
+      if (response.ok) {
+        return response.json();
       }
+      throw new Error("Error");
     })
     .then((content) => {
-      console.log("CONTENT: " + content);
       return content;
     })
-    .catch((error) => console.error(error));
-  return reponse;
+    .catch((error) => console.error("Error: " + error));
 };
 
 export const deleteMarkdownFile = async (filename) => {

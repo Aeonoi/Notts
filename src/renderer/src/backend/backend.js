@@ -13,6 +13,7 @@ app.listen(PORT, () => console.log(`Listening on localhost:${PORT}`));
 
 /**
  *  Creates a file
+ *  TODO: Store inside of database
  */
 app.post("/markdown", (req, res) => {
   const { filename, content } = req.body;
@@ -25,6 +26,13 @@ app.post("/markdown", (req, res) => {
 });
 
 /**
+ *  Updates a specific file
+ */
+app.put("/markdown/:filename", (req, res) => {
+  const filename = req.params.filename;
+});
+
+/**
  * Fetches/gets the markdown file
  */
 app.get("/markdown/:filename", (req, res) => {
@@ -33,7 +41,6 @@ app.get("/markdown/:filename", (req, res) => {
 
   if (fs.existsSync(filePath)) {
     const content = fs.readFileSync(filePath, "utf8");
-    console.log("GET REQUEST CONTENT: " + content);
     res.status(200).json({ content });
   } else {
     res.status(404).json({ message: "File not found" });
