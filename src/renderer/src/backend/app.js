@@ -1,12 +1,13 @@
 const API_BASE_URL = "http://localhost:5000/api";
 
-export const saveMarkdownFile = async (filename, content) => {
+// TODO: Test
+export const createMarkdownFile = async (filename, content) => {
   const response = await fetch(`${API_BASE_URL}/markdown`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ filename, content }),
+    body: JSON.stringify({ title: filename, content: content }),
   });
 };
 
@@ -22,6 +23,6 @@ export const updateMarkdownFile = async (noteId, newContent) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify({ content: newContent }),
   });
 };

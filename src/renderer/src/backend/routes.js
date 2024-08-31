@@ -38,10 +38,10 @@ router.post("/markdown", async (req, res) => {
  */
 router.patch("/markdown/:fileId", async (req, res) => {
   const fileId = req.params.fileId;
-  const newContent = req.body;
+  const content = req.body;
   const options = { new: true };
   try {
-    const result = await Note.findByIdAndUpdate(fileId, newContent, options);
+    const result = await Note.findByIdAndUpdate(fileId, content, options);
     res.status(200).send(result);
   } catch (e) {
     res.status(400).json({ message: e.message });

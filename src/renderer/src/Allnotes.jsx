@@ -1,30 +1,33 @@
+// var: global, let: dynamic type (can switch), const: one type
 import React, { useEffect, useState } from "react"
 const API_BASE_URL = "http://localhost:5000/api";
 import '../../input.css'
 
-function Allnotes() {
-  const [folderName, setFolderName] = useState('Test')
-  const notes = []
 
+function Allnotes() {
+  const [folderName, setFolderName] = useState([])
+  const notes = [];
+
+  // TODO: notes is empty
   useEffect(() => {
-    /// Get all notes 
-    const allNotes = async () => {
-      fetch(`${API_BASE_URL}/markdown`, {
-        method: "GET"
+    fetch(`${API_BASE_URL}/markdown`, {
+      method: "GET"
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error("Error");
       })
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          }
-          throw new Error("Error");
-        })
-        .then((content) => {
-          const contentArray = JSON.parse(JSON.stringify(content))
-          console.log(contentArray)
-        })
-        .catch((error) => console.error("Error: " + error));
-    }
-    allNotes();
+      .then((content) => {
+        const contentArray = JSON.parse(JSON.stringify(content))
+        {
+          contentArray.map(note => {
+            notes.push(note)
+          })
+        }
+      })
+      .catch((error) => console.error("Error: " + error));
   });
 
   return (
@@ -35,7 +38,7 @@ function Allnotes() {
             <div className="flex-1 min-w-0">
               <div className="text-sm font-medium flex text-gray-900">
                 <div className="flex-1">
-                  Header of file: {note}
+                  Header of file: {note.title}
                 </div>
               </div>
               <div className="flex text-sm font-medium text-gray-500">
