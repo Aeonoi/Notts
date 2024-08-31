@@ -10,20 +10,6 @@ export const saveMarkdownFile = async (filename, content) => {
   });
 };
 
-export const getMarkdownFile = (filename) => {
-  fetch(`${API_BASE_URL}/markdown/${filename}`)
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw new Error("Error");
-    })
-    .then((content) => {
-      return content;
-    })
-    .catch((error) => console.error("Error: " + error));
-};
-
 export const deleteMarkdownFile = async (filename) => {
   const response = await fetch(`${API_BASE_URL}/markdown/${filename}`, {
     method: "DELETE",
