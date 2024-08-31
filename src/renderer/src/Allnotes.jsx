@@ -1,11 +1,31 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+const API_BASE_URL = "http://localhost:5000/api";
 import '../../input.css'
 
 function Allnotes() {
   const [folderName, setFolderName] = useState('Test')
+  const notes = []
 
-  /// Get all notes 
-  const notes = ["Lebron", "James"]
+  useEffect(() => {
+    /// Get all notes 
+    const allNotes = async () => {
+      fetch(`${API_BASE_URL}/markdown`, {
+        method: "GET"
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error("Error");
+        })
+        .then((content) => {
+          const contentArray = JSON.parse(JSON.stringify(content))
+          console.log(contentArray)
+        })
+        .catch((error) => console.error("Error: " + error));
+    }
+    allNotes();
+  });
 
   return (
     <ul className="hidden md:block max-w-[20rem] divide-y divide-gray-200 dark:divide-gray-700">

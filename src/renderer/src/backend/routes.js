@@ -1,4 +1,7 @@
+// References
 // https://www.freecodecamp.org/news/build-a-restful-api-using-node-express-and-mongodb/
+// https://stackoverflow.com/questions/28459418/use-of-put-vs-patch-methods-in-rest-api-real-life-scenarios
+
 const express = require("express");
 const router = express.Router();
 const Note = require("./model/note.js");
@@ -30,7 +33,8 @@ router.post("/markdown", async (req, res) => {
 
 /**
  *  Updates a specific file (/api/markdown/<fileId>)
- *  TODO: Append the new folderId to the note's folderIds field.
+ *
+ *  Appending a folderId occurs outside
  */
 router.patch("/markdown/:fileId", async (req, res) => {
   const fileId = req.params.fileId;
@@ -41,6 +45,18 @@ router.patch("/markdown/:fileId", async (req, res) => {
     res.status(200).send(result);
   } catch (e) {
     res.status(400).json({ message: e.message });
+  }
+});
+
+/**
+ * Fetches/gets all notes (/api/markdown)
+ */
+router.get("/markdown", async (req, res) => {
+  try {
+    const allNotes = await Note.find();
+    res.json(allNotes);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 });
 
@@ -61,8 +77,14 @@ router.get("/markdown/:fileId", async (req, res) => {
 /**
  * Deletes a markdown file (/api/markdown/<fileId>)
  */
-router.delete("/markdown/:fileId", (req, res) => {
+router.delete("/markdown/:fileId", async (req, res) => {
   const fileId = req.params.fileId;
+  try {
+    const content = await Note.findByIdAndDelete(fileId);
+    res.send(`Note with name ${content.title} has been succesfully deleted`);
+  } catch (e) {
+    res.status(400).json({ message: e.message });
+  }
 });
 
 ///////////////////////////////////////////////
@@ -90,6 +112,33 @@ router.post("/folder", async (req, res) => {
  */
 router.get("/folder/:folderId", async (req, res) => {
   const folderId = req.params.folderId;
+  try {
+    const folderInfo = await Folder.findById(folderId);
+    res.status(200).json(folderInfo);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+/**
+ *  Updates a specific folder (/api/folder/<folderId>)
+ *
+ *  Appending a fileId occurs outside
+ */
+router.patch("/folder/:folderId", async (req, res) => {
+  const folderId = req.params.folderId;
+  const newContent = req.body;
+  const options = { new: true };
+  try {
+    const result = await Folder.findByIdAndUpdate(
+      folderId,
+      newContent,
+      options,
+    );
+    res.status(200).send(result);
+  } catch (e) {
+    res.status(400).json({ message: e.message });
+  }
 });
 
 /**
@@ -108,6 +157,12 @@ router.get("/folder", async (req, res) => {
  * Deletes a folder (/api/folder/<folderId>)
  * Deletes all files within folder
  */
-router.delete("/folder/:folderId", (req, res) => {
+router.delete("/folder/:folderId", async (req, res) => {
   const folderId = req.params.folderId;
+  try {
+    const content = await Folder.findByIdAndDelete(folderId);
+    res.send(`Folder with name ${content.name} has been succesfully deleted`);
+  } catch (e) {
+    res.status(400).json({ message: e.message });
+  }
 });

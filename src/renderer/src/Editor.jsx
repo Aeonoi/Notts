@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import MDEditor from '@uiw/react-md-editor';
 import { saveMarkdownFile, deleteMarkdownFile } from './backend/app.js'
 import './styles/Editor.css'
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "http://localhost:5000/api";
 
 function Editor() {
   const [value, setValue] = useState("")
