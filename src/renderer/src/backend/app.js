@@ -1,13 +1,18 @@
 const API_BASE_URL = "http://localhost:5000/api";
 
-// TODO: Test
-export const createMarkdownFile = async (filename, content) => {
+export const createMarkdownFile = async (filename) => {
   const response = await fetch(`${API_BASE_URL}/markdown`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ title: filename, content: content }),
+    body: JSON.stringify({
+      title: filename,
+      content: "",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      folderIds: [],
+    }),
   });
 };
 
@@ -24,5 +29,35 @@ export const updateMarkdownFile = async (noteId, newContent) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ content: newContent }),
+  });
+};
+
+export const createNoteFolder = async (folderName) => {
+  const response = await fetch(`${API_BASE_URL}/folder`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: folderName,
+      createdAt: new Date(),
+      noteIds: [],
+    }),
+  });
+};
+
+export const deleteNoteFolder = async (folderName) => {
+  const response = await fetch(`${API_BASE_URL}/folder/${folderName}`, {
+    method: "DELETE",
+  });
+};
+
+export const updateNoteFolder = async (folderId, newContent) => {
+  const response = await fetch(`${API_BASE_URL}/markdown/${folderId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ noteIds: newContent }),
   });
 };

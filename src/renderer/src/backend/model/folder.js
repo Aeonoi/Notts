@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 const folderSchema = new mongoose.Schema({
   name: String,
+  createdAt: Date,
   notesIds: [mongoose.SchemaTypes.ObjectId],
 });
 

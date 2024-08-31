@@ -97,6 +97,7 @@ router.delete("/markdown/:fileId", async (req, res) => {
 router.post("/folder", async (req, res) => {
   const newFolder = new Folder({
     name: req.body.name,
+    createdAt: req.body.createdAt,
     notesIds: [],
   });
   try {
