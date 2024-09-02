@@ -19,8 +19,8 @@ router.post("/markdown", async (req, res) => {
   const newNote = new Note({
     title: req.body.title,
     content: req.body.content,
-    createdAt: req.body.createdAt,
-    updatedAt: req.body.updatedAt,
+    createdAt: new Date(),
+    updatedAt: new Date(),
     folderIds: [],
   });
   try {
