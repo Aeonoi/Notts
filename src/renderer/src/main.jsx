@@ -4,15 +4,10 @@ import './styles/styles.css'
 import Editor from './Editor'
 import Sidebar from './Sidebar'
 import Allnotes from './Allnotes'
-
+import App from './App'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <div className='grid grid-cols-1 sm:grid-cols-3 gap-1 min-h-screen min-w-screen flex-col'>
-      <Sidebar />
-      <Allnotes />
-      <Editor />
-    </div>
-    <script type="module" src="./src/backend.js"></script>
+    <App />
   </React.StrictMode>
 )

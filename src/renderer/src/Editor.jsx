@@ -4,12 +4,14 @@ import { createMarkdownFile, deleteMarkdownFile, updateMarkdownFile } from './ba
 import './styles/Editor.css'
 const API_BASE_URL = "http://localhost:5000/api";
 
-function Editor(props) {
+function Editor({ currentNoteId }) {
   const [value, setValue] = useState("")
   // get when viewing a note or creating a note
-  const [markdownFileId, setMarkdownFileId] = useState('66d2754289323bf9daf9aee5')
+  // const [markdownFileId, setMarkdownFileId] = useState('66d2754289323bf9daf9aee5')
+  const [markdownFileId, setMarkdownFileId] = useState('')
 
   useEffect(() => {
+    setMarkdownFileId(currentNoteId)
     if (markdownFileId != "") {
       // fetch the data
       fetch(`${API_BASE_URL}/markdown/${markdownFileId}`)
@@ -28,7 +30,7 @@ function Editor(props) {
         })
         .catch((error) => console.error("Error: " + error));
     }
-  }, []);
+  }, [currentNoteId, markdownFileId]);
 
 
   const writeNote = (noteVal) => {

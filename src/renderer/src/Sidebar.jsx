@@ -1,20 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   Typography,
   List,
   ListItem,
   ListItemPrefix,
-  ListItemSuffix,
-  Chip,
-  Button,
   Accordion,
   AccordionHeader,
   AccordionBody,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
 } from "@material-tailwind/react";
 import {
   FolderIcon,
@@ -26,10 +19,10 @@ import {
   ChevronRightIcon,
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
-
+const API_BASE_URL = "http://localhost:5000/api";
 import '../../input.css'
 
-function Sidebar() {
+function Sidebar({ setCurrentFolder }) {
   const [open, setOpen] = useState(0);
   const [openSetting, openSettingDialog] = useState(false)
   const user = "User"
@@ -43,17 +36,23 @@ function Sidebar() {
     openSettingDialog(!openSetting);
   }
 
-  // const hours = new Date().getHours()
-  // const [greeting, setGreeting] = useState("Good Evening " + user)
-  // if (6 <= hours && hours < 11) {
-  //   setGreeting("Good Morning " + user)
-  // }
-  // else if (11 < hours && hours <= 17) {
-  //   setGreeting("Good Afternoon " + user)
-  // }
-
-  // TODO: Get folders
   const folders = ["folder1", "folder2", "folder3"]
+  const [allFolders, setAllFolders] = useState([])
+
+  useEffect(() => {
+    // fetch the data
+    fetch(`${API_BASE_URL}/folder`)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error("Error");
+      })
+      .then((content) => {
+        setAllFolders(content)
+      })
+      .catch((error) => console.error("Error: " + error));
+  }, []);
 
   return (
     <Card className="hidden lg:block h-[calc(100vh-2rem)] max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
@@ -85,13 +84,13 @@ function Sidebar() {
             </AccordionHeader>
           </ListItem>
           <AccordionBody className="py-1">
-            <List className="p-0">
-              {folders.map(folder => (
-                <ListItem>
+            <List className="p-0" >
+              {allFolders.map(folder => (
+                <ListItem onClick={() => setCurrentFolder(folder._id)}>
                   <ListItemPrefix>
                     <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                   </ListItemPrefix>
-                  {folder}
+                  {folder.name}
                 </ListItem>
               ))}
             </List>
@@ -102,6 +101,12 @@ function Sidebar() {
             <UserCircleIcon className="h-5 w-5" />
           </ListItemPrefix>
           Add Note
+        </ListItem>
+        <ListItem>
+          <ListItemPrefix>
+            <FolderIcon className="h-5 w-5" />
+          </ListItemPrefix>
+          Add folder
         </ListItem>
         <ListItem >
           <ListItemPrefix>
