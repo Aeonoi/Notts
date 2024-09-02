@@ -5,13 +5,11 @@ import '../../input.css'
 
 
 function Allnotes({ currentFolderId, setCurrentNode }) {
-  const [folderId, setCurrentFolderId] = useState('')
   const [notes, setNotes] = useState([])
 
   useEffect(() => {
-    setCurrentFolderId(currentFolderId)
     // Show all notes when no folder is selected
-    if (folderId != "") {
+    if (currentFolderId == "") {
       fetch(`${API_BASE_URL}/markdown`, {
         method: "GET"
       })
@@ -26,7 +24,43 @@ function Allnotes({ currentFolderId, setCurrentNode }) {
         })
         .catch((error) => console.error("Error: " + error));
     }
-  }, [folderId, currentFolderId]);
+    else {
+      setNotes([])
+      fetch(`${API_BASE_URL}/folder/${currentFolderId}/notes`, {
+        method: "GET"
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error("Error");
+        })
+        .then((content) => {
+          const currentNotes = []
+          content.map((note, index) => (
+            fetch(`${API_BASE_URL}/markdown/${note}`,
+              { method: "GET" }
+            )
+              .then((response) => {
+                if (response.ok) {
+                  return response.json();
+                }
+                throw new Error("Error");
+              })
+              .then((noteContent) => {
+                currentNotes.push(noteContent);
+                if (index === content.length - 1) {
+                  setNotes(currentNotes)
+                }
+              }
+              )
+              .catch((error) => console.error("Error: " + error))
+          ))
+        }
+        )
+        .catch((error) => console.error("Error: " + error));
+    }
+  }, [currentFolderId]);
 
   return (
     <ul className="hidden md:block max-w-[20rem] divide-y divide-gray-200 dark:divide-gray-700">

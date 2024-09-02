@@ -122,6 +122,19 @@ router.get("/folder/:folderId", async (req, res) => {
 });
 
 /**
+ * Fetches/gets the note ids of the specified folder id
+ */
+router.get("/folder/:folderId/notes", async (req, res) => {
+  const folderId = req.params.folderId;
+  try {
+    const folderInfo = await Folder.findById(folderId);
+    res.status(200).json(folderInfo.notesIds);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+/**
  *  Updates a specific folder (/api/folder/<folderId>)
  *
  *  Appending a fileId occurs outside

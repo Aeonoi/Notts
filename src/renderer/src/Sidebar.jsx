@@ -96,6 +96,12 @@ function Sidebar({ setCurrentFolder }) {
             </List>
           </AccordionBody>
         </Accordion>
+        <ListItem onClick={() => setCurrentFolder('')}>
+          <ListItemPrefix>
+            <UserCircleIcon className="h-5 w-5" />
+          </ListItemPrefix>
+          All notes
+        </ListItem>
         <ListItem>
           <ListItemPrefix>
             <UserCircleIcon className="h-5 w-5" />
