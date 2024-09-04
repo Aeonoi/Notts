@@ -6,6 +6,7 @@
   "author": "Aeonoi",
   "homepage": "https://electron-vite.org",
   "scripts": {
+        "install-win": "yarn install --platform=win32 --scripts-prepend-node-path=true",
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
     "start": "electron-vite preview",

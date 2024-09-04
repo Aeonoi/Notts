@@ -37,6 +37,7 @@ function Allnotes({ currentFolderId, setCurrentNode }) {
         })
         .then((content) => {
           const currentNotes = []
+          // fetech all "real" notes from the note's ids (gather the note's json)
           content.map((note, index) => (
             fetch(`${API_BASE_URL}/markdown/${note}`,
               { method: "GET" }
@@ -62,6 +63,7 @@ function Allnotes({ currentFolderId, setCurrentNode }) {
     }
   }, [currentFolderId]);
 
+  // TODO: Right click on note should allow for delete of note
   return (
     <ul className="hidden md:block max-w-[20rem] divide-y divide-gray-200 dark:divide-gray-700">
       {notes.map(note => (
@@ -78,7 +80,7 @@ function Allnotes({ currentFolderId, setCurrentNode }) {
                   Created On: {note.createdAt}
                 </div>
                 <div className="flex-1 text-right" id="lastVisited">
-                  Last Visited: {note.updatedAt}
+                  Last Updated: {note.updatedAt}
                 </div>
               </div>
             </div>

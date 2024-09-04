@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import MDEditor from '@uiw/react-md-editor';
-import { createMarkdownFile, deleteMarkdownFile, updateMarkdownFile } from './backend/app.js'
+import { updateMarkdownFile } from './backend/app.js'
 import './styles/Editor.css'
 const API_BASE_URL = "http://localhost:5000/api";
 
@@ -42,6 +42,7 @@ function Editor({ currentNoteId }) {
 
   return (
     // TODO: If value and markdown file id is empty, then when there is a new value set, ask the user if they want to create a new file (in a form)
+    // TODO: When a new value is written, update the updated time of the note
     <div className='min-h-screen min-w-screen flex flex-col'>
       <MDEditor
         value={value}

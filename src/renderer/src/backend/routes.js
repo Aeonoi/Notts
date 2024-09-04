@@ -122,7 +122,7 @@ router.get("/folder/:folderId", async (req, res) => {
 });
 
 /**
- * Fetches/gets the note ids of the specified folder id
+ * Fetches/gets the note ids of the specified folder id in the form of an array
  */
 router.get("/folder/:folderId/notes", async (req, res) => {
   const folderId = req.params.folderId;
