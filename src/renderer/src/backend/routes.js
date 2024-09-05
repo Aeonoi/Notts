@@ -18,7 +18,7 @@ module.exports = router;
 router.post("/markdown", async (req, res) => {
   const newNote = new Note({
     title: req.body.title,
-    content: req.body.content,
+    content: "",
     createdAt: new Date(),
     updatedAt: new Date(),
     folderIds: [],
@@ -97,7 +97,7 @@ router.delete("/markdown/:fileId", async (req, res) => {
 router.post("/folder", async (req, res) => {
   const newFolder = new Folder({
     name: req.body.name,
-    createdAt: req.body.createdAt,
+    createdAt: new Date(),
     notesIds: [],
   });
   try {

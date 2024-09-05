@@ -32,6 +32,16 @@ export const updateMarkdownFile = async (noteId, newContent) => {
   });
 };
 
+export const updateMarkdownFileFolders = (noteId, newContent) => {
+  const response = fetch(`${API_BASE_URL}/markdown/${noteId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ folderIds: newContent }),
+  });
+};
+
 export const createNoteFolder = async (folderName) => {
   const response = await fetch(`${API_BASE_URL}/folder`, {
     method: "POST",
@@ -40,8 +50,6 @@ export const createNoteFolder = async (folderName) => {
     },
     body: JSON.stringify({
       name: folderName,
-      createdAt: new Date(),
-      noteIds: [],
     }),
   });
 };
@@ -53,11 +61,11 @@ export const deleteNoteFolder = async (folderName) => {
 };
 
 export const updateNoteFolder = async (folderId, newContent) => {
-  const response = await fetch(`${API_BASE_URL}/markdown/${folderId}`, {
+  const response = await fetch(`${API_BASE_URL}/folder/${folderId}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ noteIds: newContent }),
+    body: JSON.stringify({ notesIds: newContent }),
   });
 };

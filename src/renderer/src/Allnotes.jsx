@@ -67,7 +67,7 @@ function Allnotes({ currentFolderId, setCurrentNode }) {
   return (
     <ul className="hidden md:block max-w-[20rem] divide-y divide-gray-200 dark:divide-gray-700">
       {notes.map(note => (
-        <li className="pb-3 sm:pb-4 hover:bg-red-500" onClick={() => setCurrentNode(note._id)}>
+        <li key={note._id} className="pb-3 sm:pb-4 hover:bg-red-500" onClick={() => setCurrentNode(note._id)}>
           <div className="flex items-center space-x-4 rtl:space-x-reverse">
             <div className="flex-1 min-w-0">
               <div className="text-sm font-medium flex text-gray-900">
