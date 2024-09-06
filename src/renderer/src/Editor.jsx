@@ -13,6 +13,7 @@ function Editor({ currentNoteId }) {
   useEffect(() => {
     setMarkdownFileId(currentNoteId)
     if (markdownFileId != "") {
+      document.getElementById('Editor').hidden = false
       // fetch the data
       fetch(`${API_BASE_URL}/markdown/${markdownFileId}`)
         .then((response) => {
@@ -30,6 +31,9 @@ function Editor({ currentNoteId }) {
         })
         .catch((error) => console.error("Error: " + error));
     }
+    else {
+      document.getElementById('Editor').hidden = true
+    }
   }, [currentNoteId, markdownFileId]);
 
 
@@ -43,14 +47,17 @@ function Editor({ currentNoteId }) {
   return (
     // TODO: If value and markdown file id is empty, then when there is a new value set, ask the user if they want to create a new file (in a form)
     // TODO: When a new value is written, update the updated time of the note
+    // Show editor only when a note was selected
     <div className='min-h-screen min-w-screen flex flex-col'>
       <MDEditor
         value={value}
         onChange={(e) => writeNote(e)}
         preview="edit"
         height="100%"
+        hidden={true}
         visibleDragbar={false}
         enableScroll={false}
+        id='Editor'
       />
     </div>
   )

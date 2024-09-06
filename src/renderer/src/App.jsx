@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import Editor from './Editor'
 import Sidebar from './Sidebar'
-import Allnotes from './Allnotes'
+import AllNotes from './AllNotes'
 import './styles/styles.css'
 
 function App() {
@@ -13,7 +13,7 @@ function App() {
   return (
     <div className='grid grid-cols-1 sm:grid-cols-3 gap-1 min-h-screen min-w-screen flex-col'>
       <Sidebar setCurrentFolder={setCurrentFolder} />
-      <Allnotes setCurrentNode={setCurrentNote} currentFolderId={currentFolder} />
+      <AllNotes setCurrentNode={setCurrentNote} currentFolderId={currentFolder} />
       <Editor currentNoteId={currentNote} />
     </div>
   )

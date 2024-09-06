@@ -4,7 +4,7 @@ const API_BASE_URL = "http://localhost:5000/api";
 import '../../input.css'
 
 
-function Allnotes({ currentFolderId, setCurrentNode }) {
+function AllNotes({ currentFolderId, setCurrentNode }) {
   const [notes, setNotes] = useState([])
 
   useEffect(() => {
@@ -92,4 +92,4 @@ function Allnotes({ currentFolderId, setCurrentNode }) {
   )
 }
 
-export default Allnotes
+export default AllNotes

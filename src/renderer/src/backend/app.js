@@ -32,16 +32,6 @@ export const updateMarkdownFile = async (noteId, newContent) => {
   });
 };
 
-export const updateMarkdownFileFolders = (noteId, newContent) => {
-  const response = fetch(`${API_BASE_URL}/markdown/${noteId}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ folderIds: newContent }),
-  });
-};
-
 export const createNoteFolder = async (folderName) => {
   const response = await fetch(`${API_BASE_URL}/folder`, {
     method: "POST",
@@ -66,6 +56,6 @@ export const updateNoteFolder = async (folderId, newContent) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ notesIds: newContent }),
+    body: newContent,
   });
 };

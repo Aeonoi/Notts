@@ -16,16 +16,54 @@ import {
 } from "@material-tailwind/react";
 import {
   FolderIcon,
-  UserCircleIcon,
   Cog6ToothIcon,
   PowerIcon,
+  DocumentIcon
 } from "@heroicons/react/24/solid";
 import {
   ChevronRightIcon,
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
-import { createNoteFolder, updateMarkdownFileFolders, updateNoteFolder } from "./backend/app";
+import { createNoteFolder, updateNoteFolder } from "./backend/app";
 const API_BASE_URL = "http://localhost:5000/api";
+
+class Greeting extends React.Component {
+  state = {
+    hour: null,
+  }
+
+  componentDidMount() {
+    this.getHour()
+  }
+
+  getHour = () => {
+    const date = new Date();
+    const hour = date.getHours()
+    this.setState({
+      hour
+    });
+  }
+
+  render() {
+    const { hour } = this.state;
+    const { username } = this.props;
+
+    const greeting = () => {
+      if (5 <= hour && hour < 12) {
+        return "Good Morning "
+      }
+      else if (12 <= hour && hour < 18) {
+        return "Good Afternoon "
+      }
+      else {
+        return "Good evening "
+      }
+    }
+    return (
+      <p>{greeting()} {username}</p>
+    );
+  }
+}
 
 function Sidebar({ setCurrentFolder }) {
   const user = "User"
@@ -107,7 +145,7 @@ function Sidebar({ setCurrentFolder }) {
             currentlySelectedFoldersIds.push(folder._id)
             // at last folder, add all the selected folders' ids 
             if (index == selectedFolders.length - 1) {
-              updateMarkdownFileFolders(id, currentlySelectedFoldersIds)
+              updateNoteFolder(id, JSON.stringify({ folderIds: currentlySelectedFoldersIds }))
             }
 
             // GET folder's notes ids
@@ -123,7 +161,7 @@ function Sidebar({ setCurrentFolder }) {
                 currentNoteIds.push(id)
 
                 // PATCH append the new note id to current folder
-                updateNoteFolder(folder._id, currentNoteIds)
+                updateNoteFolder(folder._id, JSON.stringify({ notesIds: currentNoteIds }))
               })
               .catch((error) => console.error("Error: " + error))
           })
@@ -169,18 +207,24 @@ function Sidebar({ setCurrentFolder }) {
   }
 
 
-
   useEffect(() => {
     fetchFolders()
   }, []);
 
-  // TODO: Right click on folder should allow for delete of folder
+
+  // Folder will have a different context menu than a note
+  const [openFolderContextMenu, setOpenFolderContextMenu] = useState(false)
+  const [openNoteContextMenu, setOpenNoteContextMenu] = useState(false)
+
+
+  // TODO: Right click on folder should allow for delete/rename of folder
+  // TODO: Right click on note should allow for delete/rename of note, and allow for choosing folders 
   // TODO: Style the multi select drop down
   return (
-    <Card className="hidden lg:block h-[calc(100vh-2rem)] max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
+    <Card className="hidden md:block h-[calc(100vh-2rem)] max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
       <div className="mb-2 flex items-center gap-4 p-4">
         <Typography variant="h5" color="blue-gray">
-          Hello {user}
+          <Greeting username={user} />
         </Typography>
       </div>
 
@@ -207,7 +251,7 @@ function Sidebar({ setCurrentFolder }) {
           <AccordionBody className="py-1">
             <List className="p-0" >
               {allFolders.map(folder => (
-                <ListItem key={folder._id} onClick={() => setCurrentFolder(folder._id)}>
+                <ListItem key={folder._id} onClick={() => setCurrentFolder(folder._id)} onContextMenu={(val) => showFolderContextMenu(val, folder._id)}>
                   <ListItemPrefix>
                     <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                   </ListItemPrefix>
@@ -219,13 +263,13 @@ function Sidebar({ setCurrentFolder }) {
         </Accordion>
         <ListItem onClick={() => setCurrentFolder('')}>
           <ListItemPrefix>
-            <UserCircleIcon className="h-5 w-5" />
+            <DocumentIcon className="h-5 w-5" />
           </ListItemPrefix>
           All notes
         </ListItem>
         <ListItem onClick={() => handleOpenNoteDialog(1)}>
           <ListItemPrefix>
-            <UserCircleIcon className="h-5 w-5" />
+            <DocumentIcon className="h-5 w-5" />
           </ListItemPrefix>
           Add Note
         </ListItem>
@@ -249,7 +293,7 @@ function Sidebar({ setCurrentFolder }) {
         </ListItem>
       </List>
       <Dialog open={openAddNote} handler={setOpenAddNote}>
-        <DialogHeader>Name of note</DialogHeader>
+        <DialogHeader>Name the note</DialogHeader>
         <DialogBody>
           <textarea className="resize-none text-md border border-gray-300 rounded-lg block p-2.5" value={name} onChange={handleNameConfirmation} />
           <div className="relative w-64 my-5">
@@ -264,7 +308,7 @@ function Sidebar({ setCurrentFolder }) {
               <div className="absolute top-full mt-2 w-full border border-gray-300 bg-white rounded shadow-lg">
                 {allFolders.map((folder) => (
                   <label
-                    key={folder.id}
+                    greeting key={folder.id}
                     className="block p-2 hover:bg-gray-100 cursor-pointer"
                   >
                     <input
