@@ -16,19 +16,19 @@ module.exports = router;
  *  Creates a file (/api/markdown)
  */
 router.post("/markdown", async (req, res) => {
-  const newNote = new Note({
-    title: req.body.title,
-    content: "",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    folderIds: [],
-  });
-  try {
-    const newNoteSave = await newNote.save();
-    res.status(200).json(newNoteSave);
-  } catch (e) {
-    res.status(400).json({ message: e.message });
-  }
+	const newNote = new Note({
+		title: req.body.title,
+		content: "",
+		createdAt: new Date(),
+		updatedAt: new Date(),
+		folderIds: [],
+	});
+	try {
+		const newNoteSave = await newNote.save();
+		res.status(200).json(newNoteSave);
+	} catch (e) {
+		res.status(400).json({ message: e.message });
+	}
 });
 
 /**
@@ -37,27 +37,27 @@ router.post("/markdown", async (req, res) => {
  *  Appending a folderId occurs outside
  */
 router.patch("/markdown/:fileId", async (req, res) => {
-  const fileId = req.params.fileId;
-  const content = req.body;
-  const options = { new: true };
-  try {
-    const result = await Note.findByIdAndUpdate(fileId, content, options);
-    res.status(200).send(result);
-  } catch (e) {
-    res.status(400).json({ message: e.message });
-  }
+	const fileId = req.params.fileId;
+	const content = req.body;
+	const options = { new: true };
+	try {
+		const result = await Note.findByIdAndUpdate(fileId, content, options);
+		res.status(200).send(result);
+	} catch (e) {
+		res.status(400).json({ message: e.message });
+	}
 });
 
 /**
  * Fetches/gets all notes (/api/markdown)
  */
 router.get("/markdown", async (req, res) => {
-  try {
-    const allNotes = await Note.find();
-    res.json(allNotes);
-  } catch (e) {
-    res.status(500).json({ message: e.message });
-  }
+	try {
+		const allNotes = await Note.find();
+		res.json(allNotes);
+	} catch (e) {
+		res.status(500).json({ message: e.message });
+	}
 });
 
 /**
@@ -65,26 +65,44 @@ router.get("/markdown", async (req, res) => {
  * @return {JSON} Returns the JSON content given the fileId
  */
 router.get("/markdown/:fileId", async (req, res) => {
-  const fileId = req.params.fileId;
-  try {
-    const content = await Note.findById(fileId);
-    res.status(200).json(content);
-  } catch (e) {
-    res.status(500).json({ message: e.message });
-  }
+	const fileId = req.params.fileId;
+	try {
+		const content = await Note.findById(fileId);
+		res.status(200).json(content);
+	} catch (e) {
+		res.status(500).json({ message: e.message });
+	}
 });
 
 /**
  * Deletes a markdown file (/api/markdown/<fileId>)
  */
 router.delete("/markdown/:fileId", async (req, res) => {
-  const fileId = req.params.fileId;
-  try {
-    const content = await Note.findByIdAndDelete(fileId);
-    res.send(`Note with name ${content.title} has been succesfully deleted`);
-  } catch (e) {
-    res.status(400).json({ message: e.message });
-  }
+	try {
+		const fileId = req.params.fileId;
+		const fileContent = await Note.findById(fileId);
+		const folderIds = fileContent.folderIds;
+		{
+			folderIds.map(async (id) => {
+				const folderContent = await Folder.findById(id);
+				const notesIds = folderContent.notesIds;
+				const index = notesIds.indexOf(fileId);
+				if (index > -1) {
+					notesIds.splice(index, 1);
+					await Folder.findByIdAndUpdate(
+						id,
+						{ notesIds: notesIds },
+						{ new: true },
+					);
+				}
+			});
+		}
+
+		const content = await Note.findByIdAndDelete(fileId);
+		res.send(`Note with name ${content.title} has been succesfully deleted`);
+	} catch (e) {
+		res.status(400).json({ message: e.message });
+	}
 });
 
 ///////////////////////////////////////////////
@@ -95,43 +113,45 @@ router.delete("/markdown/:fileId", async (req, res) => {
  * Creates a folder (/api/folder)
  */
 router.post("/folder", async (req, res) => {
-  const newFolder = new Folder({
-    name: req.body.name,
-    createdAt: new Date(),
-    notesIds: [],
-  });
-  try {
-    const newFolderSave = await newFolder.save();
-    res.status(200).json(newFolderSave);
-  } catch (e) {
-    res.status(400).json({ message: e.message });
-  }
+	const newFolder = new Folder({
+		name: req.body.name,
+		createdAt: new Date(),
+		notesIds: [],
+	});
+	try {
+		const newFolderSave = await newFolder.save();
+		res.status(200).json(newFolderSave);
+	} catch (e) {
+		res.status(400).json({ message: e.message });
+	}
 });
 
 /**
  * Fetches/gets the folder (/api/folder/<folderId>)
  */
 router.get("/folder/:folderId", async (req, res) => {
-  const folderId = req.params.folderId;
-  try {
-    const folderInfo = await Folder.findById(folderId);
-    res.status(200).json(folderInfo);
-  } catch (e) {
-    res.status(500).json({ message: e.message });
-  }
+	const folderId = req.params.folderId;
+	try {
+		console.log(folderId);
+		const folderInfo = await Folder.findById(folderId);
+		console.log(folderInfo);
+		res.status(200).json(folderInfo);
+	} catch (e) {
+		res.status(500).json({ message: e.message });
+	}
 });
 
 /**
  * Fetches/gets the note ids of the specified folder id in the form of an array
  */
 router.get("/folder/:folderId/notes", async (req, res) => {
-  const folderId = req.params.folderId;
-  try {
-    const folderInfo = await Folder.findById(folderId);
-    res.status(200).json(folderInfo.notesIds);
-  } catch (e) {
-    res.status(500).json({ message: e.message });
-  }
+	const folderId = req.params.folderId;
+	try {
+		const folderInfo = await Folder.findById(folderId);
+		res.status(200).json(folderInfo.notesIds);
+	} catch (e) {
+		res.status(500).json({ message: e.message });
+	}
 });
 
 /**
@@ -140,31 +160,31 @@ router.get("/folder/:folderId/notes", async (req, res) => {
  *  Appending a fileId occurs outside
  */
 router.patch("/folder/:folderId", async (req, res) => {
-  const folderId = req.params.folderId;
-  const newContent = req.body;
-  const options = { new: true };
-  try {
-    const result = await Folder.findByIdAndUpdate(
-      folderId,
-      newContent,
-      options,
-    );
-    res.status(200).send(result);
-  } catch (e) {
-    res.status(400).json({ message: e.message });
-  }
+	const folderId = req.params.folderId;
+	const newContent = req.body;
+	const options = { new: true };
+	try {
+		const result = await Folder.findByIdAndUpdate(
+			folderId,
+			newContent,
+			options,
+		);
+		res.status(200).send(result);
+	} catch (e) {
+		res.status(400).json({ message: e.message });
+	}
 });
 
 /**
  * Fetches/gets all folders (/api/folder)
  */
 router.get("/folder", async (req, res) => {
-  try {
-    const allFolders = await Folder.find();
-    res.json(allFolders);
-  } catch (e) {
-    res.status(500).json({ message: e.message });
-  }
+	try {
+		const allFolders = await Folder.find();
+		res.json(allFolders);
+	} catch (e) {
+		res.status(500).json({ message: e.message });
+	}
 });
 
 /**
@@ -172,11 +192,30 @@ router.get("/folder", async (req, res) => {
  * Deletes all files within folder
  */
 router.delete("/folder/:folderId", async (req, res) => {
-  const folderId = req.params.folderId;
-  try {
-    const content = await Folder.findByIdAndDelete(folderId);
-    res.send(`Folder with name ${content.name} has been succesfully deleted`);
-  } catch (e) {
-    res.status(400).json({ message: e.message });
-  }
+	try {
+		const folderId = req.params.folderId;
+		const folderContent = await Folder.findById(folderId);
+		const notesIds = folderContent.notesIds;
+		{
+			// remove the folderId from the note's folderIds field
+			notesIds.map(async (id) => {
+				const noteContent = await Note.findById(id);
+				const folderIds = noteContent.folderIds;
+				const index = folderIds.indexOf(folderId);
+				if (index > -1) {
+					folderIds.splice(index, 1);
+					await Note.findByIdAndUpdate(
+						id,
+						{ folderIds: folderIds },
+						{ new: true },
+					);
+				}
+			});
+		}
+		// delete folder after all notes have cleared the folder id
+		content = await Folder.findByIdAndDelete(folderId);
+		res.send(`Folder with name ${content.name} has been succesfully deleted`);
+	} catch (e) {
+		res.status(400).json({ message: e.message });
+	}
 });

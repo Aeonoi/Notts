@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
 	Button,
 	Card,
@@ -26,13 +26,18 @@ import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import {
 	createNoteFolder,
 	deleteNoteFolder,
-	updateNoteFolder,
+	updateMarkdownFile,
+	updateFolderNotesList,
 } from "./backend/app";
 const API_BASE_URL = "http://localhost:5000/api";
 import Greeting from "./Greeting";
 
 function Sidebar({ setCurrentFolder, eventOnClick }) {
 	const user = "User";
+	// Fetches when application starts
+	useEffect(() => {
+		fetchFolders();
+	}, []);
 
 	const handleOpenAccordian = (value) => {
 		setOpenAccordian(openAccordian === value ? 0 : value);
@@ -112,7 +117,7 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 						currentlySelectedFoldersIds.push(folder._id);
 						// at last folder, add all the selected folders' ids
 						if (index == selectedFolders.length - 1) {
-							updateNoteFolder(
+							updateMarkdownFile(
 								id,
 								JSON.stringify({ folderIds: currentlySelectedFoldersIds }),
 							);
@@ -133,7 +138,7 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 								currentNoteIds.push(id);
 
 								// PATCH append the new note id to current folder
-								updateNoteFolder(
+								updateFolderNotesList(
 									folder._id,
 									JSON.stringify({ notesIds: currentNoteIds }),
 								);
@@ -156,8 +161,8 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 		// send POST request to create new folder
 		if (type === "confirm") {
 			createNoteFolder(newFolderName.name);
-			fetchFolders();
 		}
+		fetchFolders();
 	};
 
 	const handleNameConfirmation = (event) => {
@@ -166,9 +171,9 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 
 	const [allFolders, setAllFolders] = useState([]);
 
-	const fetchFolders = async () => {
+	const fetchFolders = () => {
 		// fetch the data
-		await fetch(`${API_BASE_URL}/folder`)
+		fetch(`${API_BASE_URL}/folder`)
 			.then((response) => {
 				if (response.ok) {
 					return response.json();
@@ -180,7 +185,10 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 			})
 			.catch((error) => console.error("Error: " + error));
 	};
-	fetchFolders();
+
+	useEffect(() => {
+		fetchFolders();
+	});
 
 	// Hide context menu whenever there is a left click detected
 	useEffect(() => {
@@ -190,7 +198,7 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 	}, [eventOnClick]);
 
 	// Folder will have a different context menu than a note
-	const [openContextMenu, setOpenContextMenu] = useState(false);
+	const [openFolderContextMenu, setOpenFolderContextMenu] = useState(false);
 
 	const [position, setPosition] = useState({ x: 0, y: 0 });
 	const [folderId, setFolderId] = useState("");
@@ -199,7 +207,7 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 		// Disable the default context menu
 		event.preventDefault();
 
-		setOpenContextMenu(false);
+		setOpenFolderContextMenu(false);
 		const newPosition = {
 			x: event.pageX,
 			y: event.pageY,
@@ -208,12 +216,12 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 		setFolderId(selectedFolderId);
 
 		setPosition(newPosition);
-		setOpenContextMenu(true);
+		setOpenFolderContextMenu(true);
 	};
 
 	// Hide the custom context menu
-	const hideContextMenu = (event) => {
-		setOpenContextMenu(false);
+	const hideContextMenu = () => {
+		setOpenFolderContextMenu(false);
 	};
 
 	const deleteSelectedFolder = () => {
@@ -394,7 +402,7 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 					</Button>
 				</DialogFooter>
 			</Dialog>
-			{openContextMenu && (
+			{openFolderContextMenu && (
 				<Card
 					style={{ top: position.y, left: position.x, position: "absolute" }}
 				>
