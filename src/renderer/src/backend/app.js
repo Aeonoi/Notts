@@ -37,7 +37,7 @@ export const updateMarkdownFile = async (noteId, newContent) => {
 // Folder                           //
 //////////////////////////////////////
 
-export const updateFolderNotesList = async (folderId, newContent) => {
+export const updateFolder = async (folderId, newContent) => {
 	const response = await fetch(`${API_BASE_URL}/folder/${folderId}`, {
 		method: "PATCH",
 		headers: {

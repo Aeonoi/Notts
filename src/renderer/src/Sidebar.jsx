@@ -27,7 +27,7 @@ import {
 	createNoteFolder,
 	deleteNoteFolder,
 	updateMarkdownFile,
-	updateFolderNotesList,
+	updateFolder,
 } from "./backend/app";
 const API_BASE_URL = "http://localhost:5000/api";
 import Greeting from "./Greeting";
@@ -138,7 +138,7 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 								currentNoteIds.push(id);
 
 								// PATCH append the new note id to current folder
-								updateFolderNotesList(
+								updateFolder(
 									folder._id,
 									JSON.stringify({ notesIds: currentNoteIds }),
 								);
@@ -163,10 +163,6 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 			createNoteFolder(newFolderName.name);
 		}
 		fetchFolders();
-	};
-
-	const handleNameConfirmation = (event) => {
-		setName(event.target.value);
 	};
 
 	const [allFolders, setAllFolders] = useState([]);
@@ -202,8 +198,24 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 
 	const [position, setPosition] = useState({ x: 0, y: 0 });
 	const [folderId, setFolderId] = useState("");
+	const [currentName, setCurrentName] = useState("");
+	const [openRenameDialog, setOpenRenameDialog] = useState(false);
 
-	const showContextMenu = (event, selectedFolderId) => {
+	const handleNameConfirmation = (event) => {
+		setCurrentName(event.target.value);
+		setName(event.target.value);
+	};
+
+	const handleRenameDialog = async (type) => {
+		setOpenRenameDialog(!openRenameDialog);
+		// send POST request to create new folder
+		if (type === "confirm") {
+			updateFolder(folderId, JSON.stringify({ name: currentName }));
+		}
+		fetchFolders();
+	};
+
+	const showContextMenu = (event, selectedFolderId, selectedFolderName) => {
 		// Disable the default context menu
 		event.preventDefault();
 
@@ -214,6 +226,7 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 		};
 
 		setFolderId(selectedFolderId);
+		setCurrentName(selectedFolderName);
 
 		setPosition(newPosition);
 		setOpenFolderContextMenu(true);
@@ -270,7 +283,9 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 										setCurrentFolder(folder._id);
 										hideContextMenu(val);
 									}}
-									onContextMenu={(event) => showContextMenu(event, folder._id)}
+									onContextMenu={(event) =>
+										showContextMenu(event, folder._id, folder.name)
+									}
 								>
 									<ListItemPrefix>
 										<ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
@@ -407,7 +422,11 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 					style={{ top: position.y, left: position.x, position: "absolute" }}
 				>
 					<List>
-						<ListItem>
+						<ListItem
+							onClick={() => {
+								setOpenRenameDialog(true);
+							}}
+						>
 							<ListItemPrefix>
 								<WrenchIcon className="h-5 w-5" />
 							</ListItemPrefix>
@@ -422,6 +441,36 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 					</List>
 				</Card>
 			)}
+
+			<Dialog open={openRenameDialog} handler={setOpenRenameDialog}>
+				<DialogHeader>Rename current note</DialogHeader>
+				<DialogBody>
+					<textarea
+						className="resize-none text-md border border-gray-300 rounded-lg block p-2.5"
+						value={currentName}
+						onChange={handleNameConfirmation}
+					/>
+				</DialogBody>
+				<DialogFooter>
+					<Button
+						variant="text"
+						color="red"
+						onClick={handleRenameDialog}
+						className="mr-1"
+					>
+						<span>Cancel</span>
+					</Button>
+					<Button
+						id="addFolderConfirm"
+						variant="gradient"
+						color="green"
+						disabled={!currentName}
+						onClick={() => handleRenameDialog("confirm")}
+					>
+						<span>Confirm</span>
+					</Button>
+				</DialogFooter>
+			</Dialog>
 		</Card>
 	);
 }
