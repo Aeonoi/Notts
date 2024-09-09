@@ -331,7 +331,7 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 				<DialogHeader>Name the note</DialogHeader>
 				<DialogBody>
 					<textarea
-						className="resize-none text-md border border-gray-300 rounded-lg block p-2.5"
+						className="resize-none text-md w-3/4 border border-gray-300 rounded-lg block p-2.5"
 						value={name}
 						onChange={handleNameConfirmation}
 					/>
@@ -387,11 +387,11 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 				</DialogFooter>
 			</Dialog>
 
-			<Dialog open={openAddFolder} handler={setOpenAddFolder}>
+			<Dialog open={openAddFolder} handler={setOpenAddFolder} className="w-1/2">
 				<DialogHeader>Name of folder</DialogHeader>
 				<DialogBody>
 					<textarea
-						className="resize-none text-md border border-gray-300 rounded-lg block p-2.5"
+						className="resize-none text-md w-3/4 border border-gray-300 rounded-lg block p-2.5"
 						value={name}
 						onChange={handleNameConfirmation}
 					/>
@@ -446,7 +446,7 @@ function Sidebar({ setCurrentFolder, eventOnClick }) {
 				<DialogHeader>Rename current note</DialogHeader>
 				<DialogBody>
 					<textarea
-						className="resize-none text-md border border-gray-300 rounded-lg block p-2.5"
+						className="resize-none text-md w-3/4 border border-gray-300 rounded-lg block p-2.5"
 						value={currentName}
 						onChange={handleNameConfirmation}
 					/>

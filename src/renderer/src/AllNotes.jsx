@@ -26,9 +26,13 @@ function AllNotes({
 	// TODO: Consider changing to function instead of useEffect as it may improve performance
 	// TODO: When creating a new note, clicking on folder does not display that note (requires another fetch)
 	useEffect(() => {
-		fetchNotes();
+		async function fetch() {
+			await fetchNotes();
+		}
+		fetch();
 	}, [currentFolderId]);
 
+	// TODO: Refactor to have no fetches and calls the functions in "./backend/app.js"
 	const fetchNotes = async () => {
 		// Show all notes when no folder is selected
 		if (currentFolderId == "") {
@@ -200,7 +204,7 @@ function AllNotes({
 				<DialogHeader>Rename current note</DialogHeader>
 				<DialogBody>
 					<textarea
-						className="resize-none text-md border border-gray-300 rounded-lg block p-2.5"
+						className="resize-none text-md w-3/4 border border-gray-300 rounded-lg block p-2.5"
 						value={currentName}
 						onChange={handleNameConfirmation}
 					/>
